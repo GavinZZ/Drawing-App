@@ -173,8 +173,6 @@ public class ToolView extends JPanel implements Observer {
                 lineList.get(i).setBorder(BorderFactory.createLineBorder(Color.black, 3));
             }
         }
-        
-        System.out.println("Model changed!");
     }
 
     public void clear(Object observable) {
@@ -189,6 +187,27 @@ public class ToolView extends JPanel implements Observer {
         for (JButton button: lineList) {
             if (button == lineList.get(0)) {
                 model.lineWidth = 2;
+                button.setBorder(BorderFactory.createLineBorder(Color.black, 3));
+            } else {
+                button.setBorder(BorderFactory.createLineBorder(Color.gray, 0));
+            }
+        }
+    }
+
+    public void clean() {
+        model.toolButton = -1;
+        for (JButton button: buttonList) {
+            button.setBorder(BorderFactory.createLineBorder(Color.gray, 0));
+        }
+        for (JButton button: colorList) {
+            if (button == colorList.get(colorList.size()-1)) {
+                button.setBorder(BorderFactory.createLineBorder(Color.black, 3));
+            } else {
+                button.setBorder(BorderFactory.createLineBorder(Color.gray, 0));
+            }
+        }
+        for (JButton button: lineList) {
+            if (button == lineList.get(0)) {
                 button.setBorder(BorderFactory.createLineBorder(Color.black, 3));
             } else {
                 button.setBorder(BorderFactory.createLineBorder(Color.gray, 0));

@@ -82,6 +82,9 @@ public class Model {
         if (findTool(selectedTool, buttonList) == 2) {
             clearTool();
         }
+        if (findTool(selectedTool, buttonList) != 1) {
+            selectedShape = null;
+        }
         for (JButton button: buttonList) {
             if (selectedTool != button) {
                 button.setBorder(BorderFactory.createLineBorder(Color.gray, 0));
@@ -101,7 +104,7 @@ public class Model {
                 button.setBorder(BorderFactory.createLineBorder(Color.gray, 0));
             } else if (selectedColor == button && button != lastItem) {
                 if (selectedShape != null) {
-                    selectedShape.fillColor = bColor;
+                    selectedShape.shapeColor = bColor;
                 }
                 chosenColor = bColor;
                 button.setBorder(BorderFactory.createLineBorder(Color.black, 3));
@@ -126,6 +129,13 @@ public class Model {
             }
         }
         notifyCanvasObservers();
+    }
+
+    public void clean() {
+        toolButton = 0;
+        chosenColor = Color.black;
+        lineWidth = 2;
+        selectedShape = null;
     }
 
     /**

@@ -18,13 +18,14 @@ public class Canvas extends JPanel implements Observer {
     Point C = new Point(); // click point
 
     int save = 0;
+    boolean isDraging = false;
 
     private ArrayList<Shapes> shapeList = new ArrayList<>();
 
     Canvas(Model model) {
         this.addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e){
-                if (model.toolButton == 1 || model.toolButton == 3 || model.toolButton == 4 || model.toolButton == 5) {
+            public void mousePressed(MouseEvent e) {
+                if (model.toolButton == 3 || model.toolButton == 4 || model.toolButton == 5) {
                     if (save == 0) {
                         startPos.x = e.getX();
                         startPos.y = e.getY();
@@ -35,6 +36,11 @@ public class Canvas extends JPanel implements Observer {
                     save ++;
                     C.x = e.getX();
                     C.y = e.getY();
+                } else if (model.toolButton == 1) {
+                    isDraging = false;
+                    startPos.x = e.getX();
+                    startPos.y = e.getY();
+                    save = 1;
                 } else {
                     if (save == 0) {
                         startPos.x = e.getX();
@@ -45,16 +51,38 @@ public class Canvas extends JPanel implements Observer {
                 repaint();
             }
         });
+
+        this.addMouseMotionListener(new MouseAdapter() {
+            public void mouseDragged(MouseEvent e){
+                if (model.toolButton == 1) {
+                    save = 1;
+                    isDraging = true;
+                    M.x = e.getX();
+                    M.y = e.getY();
+                    repaint();
+                }
+            }
+        });
+        
+        this.addMouseMotionListener(new MouseAdapter() {
+            public void mouseReleased(MouseEvent e){
+                if (model.toolButton == 1) {
+                    endPos.x = e.getX();
+                    endPos.y = e.getY();
+                    isDraging = false;
+                    save = 2;
+                    repaint();
+                }
+            }
+        });
  
         this.addMouseMotionListener(new MouseAdapter() {
             public void mouseMoved(MouseEvent e){
-                // if (model.toolButton == 1) {
-                //     startPos.x = e.getX();
-                //     startPos.y = e.getY();
-                // }
-                M.x = e.getX();
-                M.y = e.getY();
-                repaint();
+                if (model.toolButton != 1) {
+                    M.x = e.getX();
+                    M.y = e.getY();
+                    repaint();
+                }
             }
         }); 
 
@@ -96,15 +124,11 @@ public class Canvas extends JPanel implements Observer {
             Shapes s = shapeList.get(j);
             if (s.shape == 1) {
                 if (onTheLine(s, startPos)) {
-                    if (s.fillColor == null) {
-                        model.selectedShape(s.shapeColor, s.lineWidth);
-                    } else {
-                        model.selectedShape(s.fillColor, s.lineWidth);
-                    }
+                    model.selectedShape(s.shapeColor, s.lineWidth);
                     model.selectedShape = s;
                     shapeList.remove(s);
                     shapeList.add(s);
-                    if (save == 1) {
+                    if (isDraging) {
                         s.startPos = new Point(s.startPos.x+M.x-startPos.x, s.startPos.y+M.y-startPos.y);
                         s.endPos = new Point(s.endPos.x+M.x-startPos.x, s.endPos.y+M.y-startPos.y);
                         startPos.x = M.x;
@@ -118,15 +142,11 @@ public class Canvas extends JPanel implements Observer {
                 }
             } else if (s.shape == 2) {
                 if (withInCircle(s, startPos)) {
-                    if (s.fillColor == null) {
-                        model.selectedShape(s.shapeColor, s.lineWidth);
-                    } else {
-                        model.selectedShape(s.fillColor, s.lineWidth);
-                    }
+                    model.selectedShape(s.shapeColor, s.lineWidth);
                     model.selectedShape = s;
                     shapeList.remove(s);
                     shapeList.add(s);
-                    if (save == 1) {
+                    if (isDraging) {
                         s.startPos = new Point(s.startPos.x+M.x-startPos.x, s.startPos.y+M.y-startPos.y);
                         s.endPos = new Point(s.endPos.x+M.x-startPos.x, s.endPos.y+M.y-startPos.y);
                         startPos.x = M.x;
@@ -140,15 +160,11 @@ public class Canvas extends JPanel implements Observer {
                 }
             } else if (s.shape == 3) {
                 if (withInRange(s, startPos)) {
-                    if (s.fillColor == null) {
-                        model.selectedShape(s.shapeColor, s.lineWidth);
-                    } else {
-                        model.selectedShape(s.fillColor, s.lineWidth);
-                    }
+                    model.selectedShape(s.shapeColor, s.lineWidth);
                     model.selectedShape = s;
                     shapeList.remove(s);
                     shapeList.add(s);
-                    if (save == 1) {
+                    if (isDraging) {
                         s.startPos = new Point(s.startPos.x+M.x-startPos.x, s.startPos.y+M.y-startPos.y);
                         s.endPos = new Point(s.endPos.x+M.x-startPos.x, s.endPos.y+M.y-startPos.y);
                         startPos.x = M.x;
@@ -284,8 +300,6 @@ public class Canvas extends JPanel implements Observer {
                     if (s.fillColor != model.chosenColor) {
                         s.fill = true;
                         s.fillColor = model.chosenColor;
-                        System.out.println(s.shapeColor);
-                        System.out.println(s.fillColor);
                     }
                     break;
                 }
@@ -337,20 +351,24 @@ public class Canvas extends JPanel implements Observer {
         }
     }
 
+    void setList(ArrayList<Shapes> sl) {
+        shapeList = sl;
+    }
+
+    ArrayList<Shapes> getShapeList() {
+        return shapeList;
+    }
+
     /**
      * Update with data from the model.
      */
     public void update(Object observable) {
         repaint();
         save = 0;
-        model.selectedShape = null;
         startPos = new Point();
         endPos = new Point();
-        System.out.println("Model changed!");
     }
 
-    public void clear(Object observable) {
-
-    }
+    public void clear(Object observable) { }
 }
 
