@@ -44,18 +44,18 @@ public class Main {
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(fileMenu);
 
-        model.addObserver(canvas);
-        model.addObserver(toolView);
-        model.notifyObservers();
+        model.addCanvasObserver(canvas);
+        model.addToolObserver(toolView);
+        model.notifyCanvasObservers();
 
         frame.setJMenuBar(menuBar);
         frame.add(toolView, BorderLayout.LINE_START);
-        frame.add(canvas);
+        frame.add(canvas, BorderLayout.CENTER);
 
         toolView.setPreferredSize(new Dimension(210,780));
         toolView.setBorder(BorderFactory.createLineBorder(Color.black, 2));
 
-        canvas. setPreferredSize(new Dimension(980,770));
+        canvas.setPreferredSize(new Dimension(980,770));
         canvas.setBorder(BorderFactory.createLineBorder(Color.black, 2));
 
         // ta = new TextArea();

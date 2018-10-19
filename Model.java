@@ -6,32 +6,21 @@ import javax.swing.JButton;
 
 public class Model {
     /** The observers that are watching this model for changes. */
-    private List<Observer> observers;
+    private List<Observer> canvasObservers;
+    private List<Observer> toolObservers;
     /**
      * Create a new model.
      */
     public Model() {
-        this.observers = new ArrayList<Observer>();
+        this.canvasObservers = new ArrayList<Observer>();
+        this.toolObservers = new ArrayList<Observer>();
     }
 
     int toolButton;
-    Color chosenColor;
-    int lineWidth;
+    Color chosenColor = Color.black;
+    int lineWidth = 2;
+    Shapes selectedShape;
 
-    /**
-     * Add an observer to be notified when this model changes.
-     */
-    public void addObserver(Observer observer) {
-        this.observers.add(observer);
-    }
-
-    /**
-     * Remove an observer from this model.
-     */
-    public void removeObserver(Observer observer) {
-        this.observers.remove(observer);
-    }
-    
     //  green : 5BC236
     //  blue : 115DA8
     //  yellow : ffff00
@@ -73,14 +62,20 @@ public class Model {
 
     private int findWdith(JButton selectedLine, ArrayList<JButton> buttonList) {
         if (selectedLine.getIcon().toString() == "image/1.png") {
-            return 1;
-        } else if (selectedLine.getIcon().toString() == "image/2.png") {
             return 2;
+        } else if (selectedLine.getIcon().toString() == "image/2.png") {
+            return 9;
         } else if (selectedLine.getIcon().toString() == "image/3.png") {
-            return 3;
+            return 15;
         } else {
-            return 4;
+            return 20;
         }
+    }
+
+    public void selectedShape(Color c, int w) {
+        chosenColor = c;
+        lineWidth = w;
+        notifyToolObservers();
     }
 
     public void updateToolButton(JButton selectedTool, ArrayList<JButton> buttonList) {
@@ -92,6 +87,7 @@ public class Model {
                 button.setBorder(BorderFactory.createLineBorder(Color.black, 3));
             }
         }
+        notifyCanvasObservers();
     }
 
     public void updateColorButton(JButton selectedColor, ArrayList<JButton> buttonList) {
@@ -101,12 +97,16 @@ public class Model {
             if (selectedColor != button && button != lastItem) {
                 button.setBorder(BorderFactory.createLineBorder(Color.gray, 0));
             } else if (selectedColor == button && button != lastItem) {
+                if (selectedShape != null) {
+                    selectedShape.fillColor = bColor;
+                }
                 chosenColor = bColor;
                 button.setBorder(BorderFactory.createLineBorder(Color.black, 3));
             } else if (button == lastItem) {
-                button.setBorder(BorderFactory.createLineBorder(bColor, 5));
+                button.setBorder(BorderFactory.createLineBorder(bColor, 8));
             }
         }
+        notifyCanvasObservers();
     }
 
     public void updateLineButton(JButton selectedLine, ArrayList<JButton> buttonList) {
@@ -115,17 +115,47 @@ public class Model {
             if (selectedLine != button) {
                 button.setBorder(BorderFactory.createLineBorder(Color.gray, 0));
             } else {
+                if (selectedShape != null) {
+                    selectedShape.lineWidth = width;
+                }
                 lineWidth = width;
                 button.setBorder(BorderFactory.createLineBorder(Color.black, 3));
             }
         }
+        notifyCanvasObservers();
     }
+
+    /**
+     * Add an observer to be notified when this model changes.
+     */
+    public void addCanvasObserver(Observer observer) {
+        this.canvasObservers.add(observer);
+    }
+
+    public void addToolObserver(Observer observer) {
+        this.toolObservers.add(observer);
+    }
+
+    /**
+     * Remove an observer from this model.
+     */
+    public void removeObserver(Observer observer) {
+        this.canvasObservers.remove(observer);
+        this.toolObservers.remove(observer);
+    }
+    
 
     /**
      * Notify all observers that the model has changed.
      */
-    public void notifyObservers() {
-        for (Observer observer: this.observers) {
+    public void notifyCanvasObservers() {
+        for (Observer observer: this.canvasObservers) {
+            observer.update(this);
+        }
+    }
+
+    public void notifyToolObservers() {
+        for (Observer observer: this.toolObservers) {
             observer.update(this);
         }
     }

@@ -59,13 +59,13 @@ public class ToolView extends JPanel implements Observer {
 
         JButton chooser = new JButton("Color Chooser");
         colorList.add(chooser);
-        chooser.setBorder(BorderFactory.createLineBorder(Color.gray, 0));
+        chooser.setBorder(BorderFactory.createLineBorder(Color.black, 3));
         chooser.setPreferredSize(new Dimension(2*buttonSize, 50));
         chooser.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
                 Color color = JColorChooser.showDialog(ToolView.this, "Choose a Color", Color.blue);
-                chooser.setBorder(BorderFactory.createLineBorder(color, 5));
+                chooser.setBorder(BorderFactory.createLineBorder(color, 8));
                 model.chosenColor = color;
                 for (JButton button: colorList) {
                    if (button != chooser) {
@@ -81,7 +81,11 @@ public class ToolView extends JPanel implements Observer {
          "image/3.png", "image/4.png"}) {
             JButton button = new JButton(new ImageIcon(s));
             lineList.add(button);
-            button.setBorder(BorderFactory.createLineBorder(Color.gray, 0));
+            if (s == "image/1.png") {
+                button.setBorder(BorderFactory.createLineBorder(Color.black, 3));
+            } else {
+                button.setBorder(BorderFactory.createLineBorder(Color.gray, 0));
+            }
             button.addActionListener(new lineButtonListener());
             button.setPreferredSize(new Dimension(150, thickness));
             if (thickness == 2) {
@@ -127,6 +131,34 @@ public class ToolView extends JPanel implements Observer {
      * Update with data from the model.
      */
     public void update(Object observable) {
+        JButton lastItem = colorList.get(colorList.size()-1);
+        for (JButton button: colorList) {
+            if (button == lastItem) {
+                button.setBorder(BorderFactory.createLineBorder(model.chosenColor, 8));
+            } else {
+                button.setBorder(BorderFactory.createLineBorder(Color.gray, 0));
+            }
+        }
+
+        int width = model.lineWidth;
+        int position;
+        if (width == 2) {
+            position = 0;
+        } else if (width == 9) {
+            position = 1;
+        } else  if (width == 15) {
+            position = 2;
+        } else {
+            position = 3;
+        }
+        for (int i = 0; i < lineList.size(); i ++) {
+            if (i != position) {
+                lineList.get(i).setBorder(BorderFactory.createLineBorder(Color.gray, 0));
+            } else {
+                lineList.get(i).setBorder(BorderFactory.createLineBorder(Color.black, 3));
+            }
+        }
+        
         System.out.println("Model changed!");
     }
 }
