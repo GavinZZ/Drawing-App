@@ -23,9 +23,9 @@ public class ToolView extends JPanel implements Observer {
         this.setLayout(new FlowLayout());
         this.setPreferredSize(new Dimension(200,780));
 
-        buttonPanel.setPreferredSize(new Dimension(200, 290));
+        buttonPanel.setPreferredSize(new Dimension(200, 300));
         colorPanel.setPreferredSize(new Dimension(200, 350));
-        linePanel.setPreferredSize(new Dimension(200, 125));
+        linePanel.setPreferredSize(new Dimension(200, 135));
         linePanel.setLayout(new GridLayout(4, 1));
         buttonPanel.setBorder(BorderFactory.createLineBorder(Color.black, 2));
         colorPanel.setBorder(BorderFactory.createLineBorder(Color.black, 2));

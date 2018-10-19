@@ -10,8 +10,6 @@ public class Main {
     
     static private FileDialog openDia,saveDia;
     static private File file;
-    // static private TextArea ta;
-
     public static void main(String[] args) {
         JFrame frame = new JFrame("JScratch");
         frame.setLayout(new BorderLayout());
@@ -33,8 +31,12 @@ public class Main {
                 public void actionPerformed(ActionEvent e) {
                     JMenuItem mi = (JMenuItem)e.getSource();
                     if (mi.getText() == "Load File") {
-                        canvas.setList(doLoad());
-                        toolView.clean();
+                        ArrayList<Shapes> sl= doLoad();
+                        if (sl != null) {
+                            model.notifyCanvasObservers();
+                            canvas.setList(sl);
+                            toolView.clean();
+                        }
                     } else if (mi.getText() == "Save File") {
                         doSave(canvas.getShapeList());
                     } else if (mi.getText() == "New File") {
@@ -56,19 +58,22 @@ public class Main {
         model.notifyCanvasObservers();
 
         frame.setJMenuBar(menuBar);
-        frame.add(toolView, BorderLayout.LINE_START);
-        frame.add(canvas, BorderLayout.CENTER);
+        frame.add(toolView, BorderLayout.WEST);
+        frame.add(canvas, BorderLayout.EAST);
 
-        toolView.setPreferredSize(new Dimension(210,780));
+        toolView.setPreferredSize(new Dimension(210,800));
         toolView.setBorder(BorderFactory.createLineBorder(Color.black, 2));
+        
+        JScrollPane scrollPane = new JScrollPane(canvas);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        frame.add(scrollPane);
 
-        canvas.setPreferredSize(new Dimension(980,770));
+        canvas.setPreferredSize(new Dimension(1185,800));
         canvas.setBorder(BorderFactory.createLineBorder(Color.black, 2));
 
-        // ta = new TextArea();
-        // frame.add(ta);
-
-        frame.setPreferredSize(new Dimension(1200,850));
+        frame.setMaximumSize(new Dimension(1400,850));
+        frame.setPreferredSize(new Dimension(1400,850));
         frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
@@ -94,7 +99,6 @@ public class Main {
         try {
             BufferedWriter bufw = new BufferedWriter(new FileWriter(file));
         
-            // String text = ta.getText();
             bufw.write(shapeList.size());;
 
             for (Shapes shape: shapeList) {
@@ -109,7 +113,9 @@ public class Main {
                 if (shape.fillColor == null) {
                     bufw.write(0);
                 } else {
-                    bufw.write(shape.fillColor.getRGB());
+                    bufw.write(shape.fillColor.getRed());
+                    bufw.write(shape.fillColor.getBlue());
+                    bufw.write(shape.fillColor.getGreen());
                 }
                 if (shape.fill) {
                     bufw.write(1);
@@ -132,9 +138,7 @@ public class Main {
         String fileName = openDia.getFile();
     
         if(dirPath == null || fileName == null)
-                return new ArrayList<>();
-
-        // ta.setText("");
+                return null;
 
         ArrayList<Shapes> sl = new ArrayList<>();
 
@@ -158,7 +162,9 @@ public class Main {
                 Color fillColor;
                 int retVal = bufr.read();
                 if (retVal != 0) {
-                    fillColor = new Color(retVal);
+                    int fBlue = bufr.read();
+                    int fGreen = bufr.read();
+                    fillColor = new Color(retVal, fGreen, fBlue);
                 } else {
                     fillColor = null;
                 }
