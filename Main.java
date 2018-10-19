@@ -18,12 +18,11 @@ public class Main {
 
         Canvas canvas= new Canvas(model);
         ToolView toolView = new ToolView(model);
-
-        JMenu fileMenu = new JMenu("File");
-
+        
         openDia = new FileDialog(frame,"Open",FileDialog.LOAD);
         saveDia = new FileDialog(frame,"Save",FileDialog.SAVE);
 
+        JMenu fileMenu = new JMenu("File");
         for (String s: new String[] {"New File", "Load File", "Save File"}) {
             JMenuItem menuItem = new JMenuItem(s);
             menuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -52,6 +51,20 @@ public class Main {
 
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(fileMenu);
+
+        JMenu viewMenu = new JMenu("View");
+        for (String s: new String[] {"View Full Size", "View-Fit to Window"}) {
+            JMenuItem menuItem = new JMenuItem(s);
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    
+                }
+            });
+            viewMenu.add(menuItem);
+        }
+
+        menuBar.add(viewMenu);
 
         model.addCanvasObserver(canvas);
         model.addToolObserver(toolView);
