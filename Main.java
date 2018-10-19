@@ -39,6 +39,7 @@ public class Main {
                         doSave(canvas.getShapeList());
                     } else if (mi.getText() == "New File") {
                         canvas.setList(createNew());
+                        model.notifyCanvasObservers();
                         toolView.clean();
                         model.clean();
                     }
