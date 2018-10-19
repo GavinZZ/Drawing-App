@@ -35,7 +35,6 @@ public class Canvas extends JPanel implements Observer {
                     save ++;
                     C.x = e.getX();
                     C.y = e.getY();
-                    
                 } else {
                     if (save == 0) {
                         startPos.x = e.getX();
@@ -45,16 +44,17 @@ public class Canvas extends JPanel implements Observer {
                 }
                 repaint();
             }
-            
         });
-
+ 
         this.addMouseMotionListener(new MouseAdapter() {
             public void mouseMoved(MouseEvent e){
-                // if (model.toolButton == 3 || model.toolButton == 4 || model.toolButton == 5) {
-                    M.x = e.getX();
-                    M.y = e.getY();
-                    repaint();
+                // if (model.toolButton == 1) {
+                //     startPos.x = e.getX();
+                //     startPos.y = e.getY();
                 // }
+                M.x = e.getX();
+                M.y = e.getY();
+                repaint();
             }
         }); 
 
@@ -96,26 +96,72 @@ public class Canvas extends JPanel implements Observer {
             Shapes s = shapeList.get(j);
             if (s.shape == 1) {
                 if (onTheLine(s, startPos)) {
-                    model.selectedShape(s.fillColor, s.lineWidth);
+                    if (s.fillColor == null) {
+                        model.selectedShape(s.shapeColor, s.lineWidth);
+                    } else {
+                        model.selectedShape(s.fillColor, s.lineWidth);
+                    }
                     model.selectedShape = s;
+                    shapeList.remove(s);
+                    shapeList.add(s);
+                    if (save == 1) {
+                        s.startPos = new Point(s.startPos.x+M.x-startPos.x, s.startPos.y+M.y-startPos.y);
+                        s.endPos = new Point(s.endPos.x+M.x-startPos.x, s.endPos.y+M.y-startPos.y);
+                        startPos.x = M.x;
+                        startPos.y = M.y;
+                    }  else if (save == 2) {
+                        s.startPos = new Point(s.startPos.x+endPos.x-startPos.x, s.startPos.y+endPos.y-startPos.y);
+                        s.endPos = new Point(s.endPos.x+endPos.x-startPos.x, s.endPos.y+endPos.y-startPos.y);
+                        save = 0;
+                    }
                     break;
                 }
             } else if (s.shape == 2) {
                 if (withInCircle(s, startPos)) {
-                    model.selectedShape(s.fillColor, s.lineWidth);
+                    if (s.fillColor == null) {
+                        model.selectedShape(s.shapeColor, s.lineWidth);
+                    } else {
+                        model.selectedShape(s.fillColor, s.lineWidth);
+                    }
                     model.selectedShape = s;
+                    shapeList.remove(s);
+                    shapeList.add(s);
+                    if (save == 1) {
+                        s.startPos = new Point(s.startPos.x+M.x-startPos.x, s.startPos.y+M.y-startPos.y);
+                        s.endPos = new Point(s.endPos.x+M.x-startPos.x, s.endPos.y+M.y-startPos.y);
+                        startPos.x = M.x;
+                        startPos.y = M.y;
+                    }  else if (save == 2) {
+                        s.startPos = new Point(s.startPos.x+endPos.x-startPos.x, s.startPos.y+endPos.y-startPos.y);
+                        s.endPos = new Point(s.endPos.x+endPos.x-startPos.x, s.endPos.y+endPos.y-startPos.y);
+                        save = 0;
+                    }
                     break;
                 }
             } else if (s.shape == 3) {
                 if (withInRange(s, startPos)) {
-                    model.selectedShape(s.fillColor, s.lineWidth);
+                    if (s.fillColor == null) {
+                        model.selectedShape(s.shapeColor, s.lineWidth);
+                    } else {
+                        model.selectedShape(s.fillColor, s.lineWidth);
+                    }
                     model.selectedShape = s;
+                    shapeList.remove(s);
+                    shapeList.add(s);
+                    if (save == 1) {
+                        s.startPos = new Point(s.startPos.x+M.x-startPos.x, s.startPos.y+M.y-startPos.y);
+                        s.endPos = new Point(s.endPos.x+M.x-startPos.x, s.endPos.y+M.y-startPos.y);
+                        startPos.x = M.x;
+                        startPos.y = M.y;
+                    }  else if (save == 2) {
+                        s.startPos = new Point(s.startPos.x+endPos.x-startPos.x, s.startPos.y+endPos.y-startPos.y);
+                        s.endPos = new Point(s.endPos.x+endPos.x-startPos.x, s.endPos.y+endPos.y-startPos.y);
+                        save = 0;
+                    }
                     break;
                 }
             }
         }
-
-        save = 0;
     }
 
     void erase(Graphics2D g2) {
@@ -219,29 +265,29 @@ public class Canvas extends JPanel implements Observer {
             Shapes s = shapeList.get(j);
             if (s.shape == 1) {
                 if (onTheLine(s, startPos)) {
-                    if (!s.fill || s.fillColor != model.chosenColor) {
+                    if (s.fillColor != model.chosenColor) {
                         s.fill = true;
                         s.fillColor = model.chosenColor;
-                        break;
                     }
+                    break;
                 }
             } else if (s.shape == 2) {
                 if (withInCircle(s, startPos)) {
-                    if (!s.fill || s.fillColor != model.chosenColor) {
+                    if (s.fillColor != model.chosenColor) {
                         s.fill = true;
                         s.fillColor = model.chosenColor;
-                        break;
                     }
+                    break;
                 }
             } else if (s.shape == 3) {
                 if (withInRange(s, startPos)) {
-                    if (!s.fill || s.fillColor != model.chosenColor) {
+                    if (s.fillColor != model.chosenColor) {
                         s.fill = true;
                         s.fillColor = model.chosenColor;
                         System.out.println(s.shapeColor);
                         System.out.println(s.fillColor);
-                        break;
                     }
+                    break;
                 }
             }
         }
@@ -295,13 +341,16 @@ public class Canvas extends JPanel implements Observer {
      * Update with data from the model.
      */
     public void update(Object observable) {
-        // XXX Fill this in with the logic for updating the view when the model
-        // changes.
         repaint();
         save = 0;
+        model.selectedShape = null;
         startPos = new Point();
         endPos = new Point();
         System.out.println("Model changed!");
+    }
+
+    public void clear(Object observable) {
+
     }
 }
 

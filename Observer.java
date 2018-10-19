@@ -5,5 +5,6 @@
  */
 interface Observer {
     void update(Object observable);
+    void clear(Object observable);
 }
 

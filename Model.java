@@ -79,6 +79,9 @@ public class Model {
     }
 
     public void updateToolButton(JButton selectedTool, ArrayList<JButton> buttonList) {
+        if (findTool(selectedTool, buttonList) == 2) {
+            clearTool();
+        }
         for (JButton button: buttonList) {
             if (selectedTool != button) {
                 button.setBorder(BorderFactory.createLineBorder(Color.gray, 0));
@@ -151,6 +154,12 @@ public class Model {
     public void notifyCanvasObservers() {
         for (Observer observer: this.canvasObservers) {
             observer.update(this);
+        }
+    }
+
+    public void clearTool() {
+        for (Observer observer: this.toolObservers) {
+            observer.clear(this);
         }
     }
 

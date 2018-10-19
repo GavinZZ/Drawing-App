@@ -131,12 +131,27 @@ public class ToolView extends JPanel implements Observer {
      * Update with data from the model.
      */
     public void update(Object observable) {
-        JButton lastItem = colorList.get(colorList.size()-1);
-        for (JButton button: colorList) {
-            if (button == lastItem) {
-                button.setBorder(BorderFactory.createLineBorder(model.chosenColor, 8));
+        int colorPos = -1;
+        if (model.chosenColor.equals(Color.decode("#FF0000"))) {
+            colorPos = 0;
+        } else if (model.chosenColor.equals(Color.decode("#115DA8"))) {
+            colorPos = 1;
+        } else if (model.chosenColor.equals(Color.decode("#5BC236"))) {
+            colorPos = 2;
+        } else if (model.chosenColor.equals(Color.decode("#FF6600"))) {
+            colorPos = 3;
+        } else if (model.chosenColor.equals(Color.decode("#FFFF00"))) {
+            colorPos = 4;
+        } else if (model.chosenColor.equals(Color.decode("#FF0080"))) {
+            colorPos = 5;
+        }
+        for (int i = 0; i < colorList.size(); i ++) {
+            if (i == colorList.size()-1) {
+                colorList.get(i).setBorder(BorderFactory.createLineBorder(model.chosenColor, 8));
+            } else if (i == colorPos) {
+                colorList.get(i).setBorder(BorderFactory.createLineBorder(Color.black, 3));
             } else {
-                button.setBorder(BorderFactory.createLineBorder(Color.gray, 0));
+                colorList.get(i).setBorder(BorderFactory.createLineBorder(Color.gray, 0));
             }
         }
 
@@ -160,5 +175,24 @@ public class ToolView extends JPanel implements Observer {
         }
         
         System.out.println("Model changed!");
+    }
+
+    public void clear(Object observable) {
+        for (JButton button: colorList) {
+            if (button == colorList.get(colorList.size()-1)) {
+                model.chosenColor = Color.black;
+                button.setBorder(BorderFactory.createLineBorder(Color.black, 8));
+            } else {
+                button.setBorder(BorderFactory.createLineBorder(Color.gray, 0));
+            }   
+        }
+        for (JButton button: lineList) {
+            if (button == lineList.get(0)) {
+                model.lineWidth = 2;
+                button.setBorder(BorderFactory.createLineBorder(Color.black, 3));
+            } else {
+                button.setBorder(BorderFactory.createLineBorder(Color.gray, 0));
+            }
+        }
     }
 }
