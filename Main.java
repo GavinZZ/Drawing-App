@@ -66,6 +66,17 @@ public class Main {
 
         menuBar.add(viewMenu);
 
+        KeyStroke escapeStroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0); 
+        frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escapeStroke, "deselect");
+        frame.getRootPane().getRootPane().getActionMap().put("deselect", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                model.selectedShape = null;
+                model.toolButton = -1;
+                model.clean();
+            }
+        });
+
         model.addCanvasObserver(canvas);
         model.addToolObserver(toolView);
         model.notifyCanvasObservers();

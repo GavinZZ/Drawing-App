@@ -20,7 +20,7 @@ public class ToolView extends JPanel implements Observer {
     int buttonSize = 90;
 
     public ToolView(Model model) {
-        this.setLayout(new FlowLayout());
+        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setPreferredSize(new Dimension(200,780));
 
         buttonPanel.setPreferredSize(new Dimension(200, 300));
